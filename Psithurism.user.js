@@ -5,7 +5,7 @@
 // @description  Hotkeys for the N-Day Potato Alliance, based on NSBreeze++
 // @author       Somyrion (Edited by Fregerson)
 // @match        https://www.nationstates.net/*
-// @updateURL    https://github.com/Somyrion/somyrion.github.io/raw/master/psithurism/psithurism.user.js
+// @updateURL    https://github.com/fregerson/Misc_Code/raw/master/psithurism.user.js
 // @require      https://code.jquery.com/jquery-3.5.1.min.js
 // @grant        none
 // ==/UserScript==
