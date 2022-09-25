@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Psithurism.user.js
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2.2
+// @version      0.1.2.3
 // @description  Hotkeys for the N-Day Potato Alliance, based on NSBreeze++
 // @author       Somyrion (Edited by Fregerson)
 // @match        https://www.nationstates.net/*
@@ -142,13 +142,13 @@ const facID = "95"; // update when N-Day starts!
 			}
 			// Perform Targetting (K, K, K, K)
 			else if (e.keyCode == 75) {
-                var regexFindNumber = /[\d,]+/g;
+                		var regexFindNumber = /[\d,]+/g;
 				// if not on the faction's list of nations already, go to it
 				if (window.location.href.indexOf("page=faction") > -1 && window.location.href.indexOf("view=nations") <= -1) {
 					// $('a.nukestat-nations')[0].click(); // Traditional way of just going to the first nation page
-                    // Below method aims to randomise the nation page for huge factions
-                    var nationCount = parseInt($('.nukestat-nations').text().match(regexFindNumber)[0].replace(",",""));
-                    window.location.href = "https://nationstates.net" + $('.fancylike a').attr('href') + "/view=nations?start=" + Math.floor(Math.random()*nationCount);
+                   			// Below method aims to randomise the nation page for huge factions
+                    			var nationCount = parseInt($('.nukestat-nations').text().match(regexFindNumber)[0].replace(",",""));
+                    			window.location.href = "https://nationstates.net" + $('.fancylike a').attr('href') + "/view=nations?start=" + Math.floor(Math.random()*nationCount);
 				}
 				// if on the faction's list of nations, choose a random non-fully-irradiated nation
 				else if (window.location.href.indexOf("page=faction") > -1 && window.location.href.indexOf("view=nations") > -1) {
