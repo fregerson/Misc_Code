@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Psithurism.user.js
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2.1a
+// @version      0.1.2.1b
 // @description  Hotkeys for the N-Day Potato Alliance, based on NSBreeze++
 // @author       Somyrion (Edited by Fregerson)
 // @match        https://www.nationstates.net/*
@@ -151,7 +151,7 @@ const facID = "95"; // update when N-Day starts!
 						var nationToTarget = linkToTarget.match(regexFindNation)[0];
 						window.location.href = "https://www.nationstates.net/nation="+nationToTarget+"/page=nukes?target="+nationToTarget;
 					} else {
-						$('a[href^="view=nations?start="]')[0].click();
+						$('#content a:last')[0].click()
 					}
 				}
                 // if on the faction's nuke/shield/production page, chose a random nation (WARNING: No guarentees it is non-fully-irradiated)
