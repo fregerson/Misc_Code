@@ -1,12 +1,11 @@
 // ==UserScript==
 // @name         Psithurism.user.js
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2.3
+// @version      0.1.2.1a
 // @description  Hotkeys for the N-Day Potato Alliance, based on NSBreeze++
 // @author       Somyrion (Edited by Fregerson)
 // @match        https://www.nationstates.net/*
-// @downloadURL    https://github.com/fregerson/Misc_Code/raw/main/Psithurism.user.js
-// @updateURL    https://github.com/fregerson/Misc_Code/raw/main/Psithurism.user.js
+// @updateURL    https://github.com/Somyrion/somyrion.github.io/raw/master/psithurism/psithurism.user.js
 // @require      https://code.jquery.com/jquery-3.5.1.min.js
 // @grant        none
 // ==/UserScript==
@@ -41,7 +40,7 @@ const facID = "95"; // update when N-Day starts!
 	var alternated = false;
 	$(document).keydown(function(f) {
 		shifted = f.shiftKey;
-        	controlled = f.ctrlKey;
+        controlled = f.ctrlKey;
 		alternated = f.altKey;
 		// Stops the spacebar from scrolling
 		if (f.keyCode == 32 && f.target == document.body) {
@@ -52,9 +51,9 @@ const facID = "95"; // update when N-Day starts!
 	// This is the main keymapping function of the script
 	$(document).keyup(function(e) {
 		// Psithurism will not activate while you are using the Shift, Ctrl, ot Alt keys
-        	if (shifted || controlled || alternated){
+        if (shifted || controlled || alternated){
 			return;
-        	}
+        }
 		else {
 			if ($("input,textarea").is(":focus")){
 			// Psithurism will not activate if you are typing in a text field
@@ -142,42 +141,49 @@ const facID = "95"; // update when N-Day starts!
 			}
 			// Perform Targetting (K, K, K, K)
 			else if (e.keyCode == 75) {
-                		var regexFindNumber = /[\d,]+/g;
-				// if not on the faction's list of nations already, go to it
-				if (window.location.href.indexOf("page=faction") > -1 && window.location.href.indexOf("view=nations") <= -1) {
-					// $('a.nukestat-nations')[0].click(); // Traditional way of just going to the first nation page
-                   			// Below method aims to randomise the nation page for huge factions
-                    			var nationCount = parseInt($('.nukestat-nations').text().match(regexFindNumber)[0].replace(",",""));
-                    			window.location.href = "https://nationstates.net" + $('.fancylike a').attr('href') + "/view=nations?start=" + Math.floor(Math.random()*nationCount);
-				}
+                var regexFindNumber = /\d+/g;
 				// if on the faction's list of nations, choose a random non-fully-irradiated nation
-				else if (window.location.href.indexOf("page=faction") > -1 && window.location.href.indexOf("view=nations") > -1) {
+				if (window.location.href.indexOf("page=faction") > -1 && window.location.href.indexOf("view=nations") > -1) {
 					if ($('ol li:not(:has(.nukedestroyedicon)) a').length) {
 						var linkToTarget = $('ol li:not(:has(.nukedestroyedicon)) a').random()[0].href;
 						var regexFindNation = /(?<=nation=).*(?=\/page=nukes)/g;
 						var nationToTarget = linkToTarget.match(regexFindNation)[0];
 						window.location.href = "https://www.nationstates.net/nation="+nationToTarget+"/page=nukes?target="+nationToTarget;
 					} else {
-						window.location.href = "https://nationstates.net" + $('.fancylike a').attr('href') + "/view=nations?start=" + Math.floor(Math.random()*nationCount);
+						$('a[href^="view=nations?start="]')[0].click();
 					}
+				}
+                // if on the faction's nuke/shield/production page, chose a random nation (WARNING: No guarentees it is non-fully-irradiated)
+                else if (window.location.href.indexOf("page=faction") > -1 && (window.location.href.indexOf("view=nukes") > -1 ||
+                                                                               window.location.href.indexOf("view=shield") > -1 ||
+                                                                               window.location.href.indexOf("view=production") > -1)) {
+                    var targetNation = $("tbody tr:has(.nuketoken:has(.icon-radioactive)) .nlink").random()[0].textContent;
+                    window.location.href = "https://www.nationstates.net/nation="+targetNation+"/page=nukes?target="+targetNation;
+                }
+                // if not on the faction's list of nations already, go to it
+				else if (window.location.href.indexOf("page=faction") > -1 && window.location.href.indexOf("view=nations") <= -1) {
+					$('a.nukestat-nations')[0].click();
 				}
 				// if on the targetting page, calculate the appropriate number of nukes to target
 				else if (window.location.href.indexOf("?target=") > -1 && window.location.href.indexOf("page=nukes") > -1) {
-					var alreadyTargeted = parseInt($('.nukestat-targeted').text().match(regexFindNumber)[0].replace(",",""));
-					var alreadyRads = parseInt($('.nukestat-radiation').text().match(regexFindNumber)[0].replace(",",""));
-					var alreadyIncoming = parseInt($('.nukestat-incoming').text().match(regexFindNumber)[0].replace(",",""));
+					var alreadyTargeted = parseInt($('.nukestat-targeted').text().match(regexFindNumber)[0]);
+					var alreadyRads = parseInt($('.nukestat-radiation').text().match(regexFindNumber)[0]);
+					var alreadyIncoming = parseInt($('.nukestat-incoming').text().match(regexFindNumber)[0]);
 					var already = alreadyTargeted + alreadyRads + alreadyIncoming;
 					// if not enough are already targeted/rad/incoming at the nation, fire more, otherwise go back to the faction list
 					if (already < 100 && $('.button[name="nukes"]').length > 0) {
-						var toTarget = 100 - already;
-                        var nukeCount = parseInt($('.nukestat-nukes').text().match(regexFindNumber)[1].replace(",",""));
-                        var currentWindow = window.location.href;
-                        if (toTarget <= nukeCount) { // If you have more nukes than required
-                           window.location.href = currentWindow + "&nukes=" + toTarget;
-                        }
-                        else { // If you have less nuke than required
-                            window.location.href = currentWindow + "&nukes=" + nukeCount;
-                        }
+						var minToTarget = 100 - already;
+						var maxToTarget = minToTarget + 15;
+						// choose the number of nukes within the right range
+						$('.button[name="nukes"]').each(function(i) {
+							var buttonValue = parseInt($(this).attr("value"));
+							if (buttonValue <= maxToTarget) {
+								var currentWindow = window.location.href;
+								window.location.href = currentWindow + "&nukes=" + buttonValue;
+								// any additional code if there's a captcha/additional choice?
+								return false;
+							}
+						});
 					}
 					else {
 						window.location.href = "https://nationstates.net" + $('.factionname').attr('href') + "/view=nations";
