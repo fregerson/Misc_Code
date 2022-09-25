@@ -41,7 +41,7 @@ const facID = "95"; // update when N-Day starts!
 	var alternated = false;
 	$(document).keydown(function(f) {
 		shifted = f.shiftKey;
-        controlled = f.ctrlKey;
+        	controlled = f.ctrlKey;
 		alternated = f.altKey;
 		// Stops the spacebar from scrolling
 		if (f.keyCode == 32 && f.target == document.body) {
@@ -52,9 +52,9 @@ const facID = "95"; // update when N-Day starts!
 	// This is the main keymapping function of the script
 	$(document).keyup(function(e) {
 		// Psithurism will not activate while you are using the Shift, Ctrl, ot Alt keys
-        if (shifted || controlled || alternated){
+        	if (shifted || controlled || alternated){
 			return;
-        }
+        	}
 		else {
 			if ($("input,textarea").is(":focus")){
 			// Psithurism will not activate if you are typing in a text field
