@@ -5,7 +5,7 @@
 // @description  Hotkeys for the N-Day Potato Alliance, based on NSBreeze++
 // @author       Somyrion (Edited by Fregerson)
 // @match        https://www.nationstates.net/*
-// @updateURL    https://github.com/Somyrion/somyrion.github.io/raw/master/psithurism/psithurism.user.js
+// @updateURL    https://github.com/fregerson/Misc_Code/raw/main/Psithurism.user.js
 // @require      https://code.jquery.com/jquery-3.5.1.min.js
 // @grant        none
 // ==/UserScript==
@@ -166,7 +166,7 @@ const facID = "95"; // update when N-Day starts!
 					// if not enough are already targeted/rad/incoming at the nation, fire more, otherwise go back to the faction list
 					if (already < 100 && $('.button[name="nukes"]').length > 0) {
 						var toTarget = 100 - already;
-                        var nukeCount = parseInt($('.nukeselfview')[1]);
+                        var nukeCount = parseInt($('.nukestat-nukes').text().match(regexFindNumber)[1]);
                         var currentWindow = window.location.href;
                         if (toTarget <= nukeCount) { // If you have more nukes than required
                            window.location.href = currentWindow + "&nukes=" + toTarget;
