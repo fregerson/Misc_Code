@@ -141,9 +141,13 @@ const facID = "95"; // update when N-Day starts!
 			}
 			// Perform Targetting (K, K, K, K)
 			else if (e.keyCode == 75) {
+                var regexFindNumber = /[\d,]+/g;
 				// if not on the faction's list of nations already, go to it
 				if (window.location.href.indexOf("page=faction") > -1 && window.location.href.indexOf("view=nations") <= -1) {
-					$('a.nukestat-nations')[0].click();
+					// $('a.nukestat-nations')[0].click(); // Traditional way of just going to the first nation page
+                    // Below method aims to randomise the nation page for huge factions
+                    var nationCount = parseInt($('.nukestat-nations').text().match(regexFindNumber)[0].replace(",",""));
+                    window.location.href = "https://nationstates.net" + $('.fancylike a').attr('href') + "/view=nations?start=" + Math.floor(Math.random()*nationCount);
 				}
 				// if on the faction's list of nations, choose a random non-fully-irradiated nation
 				else if (window.location.href.indexOf("page=faction") > -1 && window.location.href.indexOf("view=nations") > -1) {
@@ -153,20 +157,19 @@ const facID = "95"; // update when N-Day starts!
 						var nationToTarget = linkToTarget.match(regexFindNation)[0];
 						window.location.href = "https://www.nationstates.net/nation="+nationToTarget+"/page=nukes?target="+nationToTarget;
 					} else {
-						$('a[href^="view=nations?start="]')[0].click();
+						window.location.href = "https://nationstates.net" + $('.fancylike a').attr('href') + "/view=nations?start=" + Math.floor(Math.random()*nationCount);
 					}
 				}
 				// if on the targetting page, calculate the appropriate number of nukes to target
 				else if (window.location.href.indexOf("?target=") > -1 && window.location.href.indexOf("page=nukes") > -1) {
-					var regexFindNumber = /\d+/g;
-					var alreadyTargeted = parseInt($('.nukestat-targeted').text().match(regexFindNumber)[0]);
-					var alreadyRads = parseInt($('.nukestat-radiation').text().match(regexFindNumber)[0]);
-					var alreadyIncoming = parseInt($('.nukestat-incoming').text().match(regexFindNumber)[0]);
+					var alreadyTargeted = parseInt($('.nukestat-targeted').text().match(regexFindNumber)[0].replace(",",""));
+					var alreadyRads = parseInt($('.nukestat-radiation').text().match(regexFindNumber)[0].replace(",",""));
+					var alreadyIncoming = parseInt($('.nukestat-incoming').text().match(regexFindNumber)[0].replace(",",""));
 					var already = alreadyTargeted + alreadyRads + alreadyIncoming;
 					// if not enough are already targeted/rad/incoming at the nation, fire more, otherwise go back to the faction list
 					if (already < 100 && $('.button[name="nukes"]').length > 0) {
 						var toTarget = 100 - already;
-                        var nukeCount = parseInt($('.nukestat-nukes').text().match(regexFindNumber)[1]);
+                        var nukeCount = parseInt($('.nukestat-nukes').text().match(regexFindNumber)[1].replace(",",""));
                         var currentWindow = window.location.href;
                         if (toTarget <= nukeCount) { // If you have more nukes than required
                            window.location.href = currentWindow + "&nukes=" + toTarget;
